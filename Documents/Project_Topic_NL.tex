@@ -1,0 +1,165 @@
+
+\documentclass{amsart}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsfonts}
+
+\setcounter{MaxMatrixCols}{10}
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{Version=5.50.0.2960}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{BibliographyScheme=BibTeX}
+%TCIDATA{Created=Thursday, February 18, 2021 13:39:50}
+%TCIDATA{LastRevised=Monday, February 14, 2022 19:11:00}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{<META NAME="DocumentShell" CONTENT="Articles\SW\AMS Journal Article">}
+%TCIDATA{Language=American English}
+%TCIDATA{CSTFile=amsartci.cst}
+
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{solution}{Solution}
+\theoremstyle{plain}
+\newtheorem{acknowledgement}{Acknowledgement}
+\newtheorem{algorithm}{Algorithm}
+\newtheorem{axiom}{Axiom}
+\newtheorem{case}{Case}
+\newtheorem{claim}{Claim}
+\newtheorem{conclusion}{Conclusion}
+\newtheorem{condition}{Condition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{corollary}{Corollary}
+\newtheorem{criterion}{Criterion}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{exercise}{Exercise}
+\newtheorem{lemma}{Lemma}
+\newtheorem{notation}{Notation}
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{summary}{Summary}
+\numberwithin{equation}{section}
+\input{tcilatex}
+
+\begin{document}
+\title[Topic]{EN.625.692.81.SP22 Probabilistic Graphical Models Project
+Topic Proposal}
+\author{Nicholas Lines}
+\email{nicholasalines@gmail.com}
+\date{\today }
+\maketitle
+
+\section{Proposed Topic: Reporting Trust}
+
+One field of research rich with applications of Probabilistic Graphical
+Models is knowledge management and fusion. Knowledge graphs are used in many
+influential and meritorious ways, from improving Google searches to
+predicting opportunities for medical advancement \cite%
+{koller2009probabilistic}. One corner of this field of particular interest
+to me is that region dealing with trust and certainty problems within
+knowledge systems. For my project I'd like to propose an investigation into
+modeling a system featuring observers whose trustworthiness varies by
+observer and also by topic.
+
+\section{A Suggested Toy Setting and Relevant Problems}
+
+\subsection{Introduction}
+
+While the details of what I investigate will no doubt change throughout the
+next few weeks as my understanding of the tools and theory readily available
+grows, here is a first-pass at a simple application and the relevant
+problems it inspires.
+
+In this setting, we imagine a newspaper reporter $B$ who is required to stay
+abreast of current events in each of $N_{E}\in \mathbb{N}$ news topics. To
+aid in this, the reporter has established $N_{O}\in $ $\mathbb{N}$ distinct
+sources that observe some subset of world events and pass on their opinions
+to the reporter. The reporter has no independent verification system outside
+of this set of observers $O=\left\{ O_{1},O_{2},\dots ,O_{N_{O}}\right\} $.
+The overall goal of the reporter is to understand the world events as well
+as possible using the available sources. The first task toward this end will
+be for the reporter to identify consensus in each topic and decide on a set
+of sources that are most trustworthy regarding that topic. The second task
+will be to introduce $N_{n}\in \mathbb{N}$ new sources of unknown
+trustworthiness, and determine their trustworthiness and assign them to
+informative groups as appropriate.
+
+\FRAME{ftbpFU}{6.5094in}{3.7075in}{0pt}{\Qcb{An illustration of the trust
+network described in the Details subsection. The directed edges from the
+Politics variable to the observers and from the observers to the Reporter's
+current belief about the Political variable are shown. In the full model,
+directed edges like these flow from each of the Event Sets to each Observer
+and from each Observer to each Belief.}}{\Qlb{f1}}{picture2.jpg}{\special%
+{language "Scientific Word";type "GRAPHIC";maintain-aspect-ratio
+TRUE;display "USEDEF";valid_file "F";width 6.5094in;height 3.7075in;depth
+0pt;original-width 13.2334in;original-height 7.5118in;cropleft "0";croptop
+"1";cropright "1";cropbottom "0";filename 'Picture2.jpg';file-properties
+"XNPEU";}}
+
+\subsection{Details}
+
+We'll now begin to provide assumptions that will limit the scope of the
+problem to enable us to perform meaningful experiments. Let $N_{E}=3,$ that
+is, we limit ourselves to three topic sets, specifically $P$ for Politics, $E
+$ for Entertainment, and $T$ for Technology. We will assume hard boundaries
+between these topics, i.e. knowledge about Politics will be independent of
+knowledge about Entertainment, etc. Moving forward from instantiation, we
+will assign to each topic set a new value $P_{t}\sim D_{P},E_{t}\sim
+D_{E},T_{t}\sim D_{T}$ for $t=1,2,3...,$ sampled from $\left\{ 0,1\right\} $
+according to a binomial probability distribution unique to each topic. This
+value represents a fact related to that topic area at time $t$. Note that
+the value held by each topic variable is binary, and each value is
+independent from those held at other time steps and by other variables
+within the same time step.  
+
+Let's discuss the observers. Let $N_{O}=6$. We define three Dirichlet
+distributions 
+\begin{eqnarray*}
+D_{O,P} &=&Dir\left( \left[ 0.8,0.1,0.1\right] \right)  \\
+D_{O,E} &=&Dir\left( \left[ 0.1,0.8,0.1\right] \right)  \\
+D_{O,T} &=&Dir\left( \left[ 0.1,0.1,0.8\right] \right) 
+\end{eqnarray*}%
+so that each is biased towards a single topic, and sample from these the
+multinomial parameters for each observer node 
+\begin{eqnarray*}
+p_{O_{1}},p_{O_{2}} &\sim &D_{O,P} \\
+p_{O_{3}},p_{O_{4}} &\sim &D_{O,E}=Mult\left( n_{O,E},p_{O,E}\right)  \\
+p_{O_{5}},p_{O_{6}} &\sim &D_{O,T}.=Mult\left( n_{O,T},p_{O,T}\right) .
+\end{eqnarray*}%
+For each time step $t$ and each observer node $i=1,2,...,6$, we draw a sample%
+\begin{equation*}
+O_{i,t}\sim Mult\left( n_{O_{i}},p_{O_{i}}\right) 
+\end{equation*}%
+which will serve tell us how the observer will pass on their observations to
+the reporter. We'll start with $n_{O_{i}}=5$ for all nodes, and crank this
+up as needed to make learning faster. Each observer takes note of the three
+event values and retransmits them to the reporter according to the following
+system:%
+\begin{eqnarray*}
+\text{For } &&\text{each topic }j=1,2,3\text{:} \\
+&&\text{If }O_{i,t}[j]>0\text{, pass on the true event value} \\
+&&\text{Otherwise, pass on }1\text{ or }0\text{ with equal probability.}
+\end{eqnarray*}
+
+Task 1 is to learn the trustworthiness of each node $O_{i}$ with respect to
+each topic by forming clusters that agree by consensus. 
+
+For Task 2 after Task 1 is complete at time step $t_{k}$ we introduce a new
+observer $O_{n}$ whose bias has been sampled randomly according to one of
+the three strategies described above. The task will be to learn the bias of $%
+O_{n}$ in as few time steps as possible.
+
+\bigskip 
+
+\subsection{Related work}
+
+Some elements of this proposal were inspired by \cite%
+{levchuk2015probabilistic}. I also referred heavily to the course text, \cite%
+{koller2009probabilistic}.
+
+\nocite{wasserman2013all}
+
+\bibliographystyle{amsplain}
+\bibliography{acompat,JHU}
+
+\end{document}

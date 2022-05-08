@@ -1,0 +1,239 @@
+
+\documentclass{amsart}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsfonts}
+
+\setcounter{MaxMatrixCols}{10}
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{Version=5.50.0.2960}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{BibliographyScheme=BibTeX}
+%TCIDATA{Created=Thursday, February 18, 2021 13:39:50}
+%TCIDATA{LastRevised=Monday, March 07, 2022 23:32:23}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{<META NAME="DocumentShell" CONTENT="Articles\SW\AMS Journal Article">}
+%TCIDATA{Language=American English}
+%TCIDATA{CSTFile=amsartci.cst}
+
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{solution}{Solution}
+\theoremstyle{plain}
+\newtheorem{acknowledgement}{Acknowledgement}
+\newtheorem{algorithm}{Algorithm}
+\newtheorem{axiom}{Axiom}
+\newtheorem{case}{Case}
+\newtheorem{claim}{Claim}
+\newtheorem{conclusion}{Conclusion}
+\newtheorem{condition}{Condition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{corollary}{Corollary}
+\newtheorem{criterion}{Criterion}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{exercise}{Exercise}
+\newtheorem{lemma}{Lemma}
+\newtheorem{notation}{Notation}
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{summary}{Summary}
+\numberwithin{equation}{section}
+\input{tcilatex}
+
+\begin{document}
+\title[Credibility Project Outline]{EN.625.692.81.SP22 Probabilistic
+Graphical Models Project Outline and Bibliography: A Probabilistic Graphical
+Model for Credibility}
+\author{Nicholas Lines}
+\email{nicholasalines@gmail.com}
+\date{\today }
+\maketitle
+
+\section{Introduction}
+
+\subsection{Why credibility?}
+
+Nearly all adults old enough to have a social media account and internet
+connection are bombarded by information, opinions, and news. On an
+individual level, accumulating important news information is overwhelmingly
+done through passive online activities. Five years ago the Pew Research
+Center found that 67\% of Americans learned about news on social media, and
+this year they added that 23\% got their news from podcasts \cite%
+{gottfried2019news}\cite{walker2022nearly}. Interestingly, this movement
+toward digitally-fed news has also brought on increased concern about
+legitimacy: Pew also asked their 2021 respondents if they would support
+Federal internet censorship, and 48\% said yes, compared with 39\% in 2018.
+How to use existing systems to find credible information is a vital question
+each individual must answer. More generally, any actor involved in
+distilling news data into factual reports must perform a similar credibility
+analysis using a network of dubious sources. Self-filtering news data is a
+difficult challenge, involving both bias in the sources consulted, bias
+introduced by those sources, and bias in credibility assessment introduced
+by the actor. 
+
+In this project we will introduce a probabilistic graphical framework in
+which we can explore information fusion tasks. While this approach is fairly
+simple and extremely clinical, we claim that it has the potential to aid
+(not replace) human coordination of news information review and digestion.
+We note that the goal of our investigation is to improve in recognition of
+net credibility of sources in terms of \emph{consensus}, not \emph{truth}. 
+
+\subsection{A probabilistic graphical representation of news reporting}
+
+Consider a newspaper reporter $B$ who is required to stay abreast of current
+events in each of $N_{E}\in \mathbb{N}$ news topics. We will assume (na\"{\i}%
+vely, of course) that these news topics are all independent (i.e. content
+from one topic carries no significant intersection with content from another
+topic). To aid in this, the reporter has established $N_{O}\in $ $\mathbb{N}$
+distinct sources that observe some subset of world events and pass on their
+opinions to the reporter. For the purposes of this project, the reporter has
+no independent verification system outside of this set of observers $%
+O=\left\{ O_{1},O_{2},\dots ,O_{N_{O}}\right\} $. The overall goal of the
+reporter is to understand the world events as well as possible using the
+available sources. 
+
+The first task toward this end will be for the reporter to identify
+consensus in each topic and decide on a set of sources that are most
+trustworthy regarding that topic. 
+
+The second task will be to introduce $N_{n}\in \mathbb{N}$ new sources of
+unknown trustworthiness, and determine their trustworthiness and assign them
+to informative groups as appropriate.
+
+\FRAME{ftbpFU}{6.5094in}{3.7075in}{0pt}{\Qcb{An illustration of the trust
+network described in the Details subsection. The directed edges from the
+Politics variable to the observers and from the observers to the Reporter's
+current belief about the Political variable are shown. In the full model,
+directed edges like these flow from each of the Event Sets to each Observer
+and from each Observer to each Belief.}}{\Qlb{f1}}{picture2.jpg}{\special%
+{language "Scientific Word";type "GRAPHIC";maintain-aspect-ratio
+TRUE;display "USEDEF";valid_file "F";width 6.5094in;height 3.7075in;depth
+0pt;original-width 13.2334in;original-height 7.5118in;cropleft "0";croptop
+"1";cropright "1";cropbottom "0";filename 'Picture2.jpg';file-properties
+"XNPEU";}}
+
+\subsection{Details}
+
+We'll now begin to provide assumptions that will limit the scope of the
+problem to enable us to perform meaningful experiments. Let $N_{E}=3,$ that
+is, we limit ourselves to three topic sets, specifically $P$ for Politics, $E
+$ for Entertainment, and $T$ for Technology. We will assume hard boundaries
+between these topics, i.e. knowledge about Politics will be independent of
+knowledge about Entertainment, etc. Moving forward from instantiation, we
+will assign to each topic set a new value $P_{t}\sim D_{P},E_{t}\sim
+D_{E},T_{t}\sim D_{T}$ for $t=1,2,3...,$ sampled from $\left\{ 0,1\right\} $
+according to a binomial probability distribution unique to each topic. This
+value represents a fact related to that topic area at time $t$. Note that
+the value held by each topic variable is binary, and each value is
+independent from those held at other time steps and by other variables
+within the same time step.
+
+\subsubsection{What do we observe?}
+
+Let's discuss the observers. Let $N_{O}=6$. We define three Dirichlet
+distributions 
+\begin{eqnarray*}
+D_{O,P} &=&Dir\left( \left[ 0.8,0.1,0.1\right] \right)  \\
+D_{O,E} &=&Dir\left( \left[ 0.1,0.8,0.1\right] \right)  \\
+D_{O,T} &=&Dir\left( \left[ 0.1,0.1,0.8\right] \right) 
+\end{eqnarray*}%
+so that each is biased towards a single topic, and sample from these the
+multinomial parameters for each observer node 
+\begin{eqnarray*}
+p_{O_{1}},p_{O_{2}} &\sim &D_{O,P}=Mult\left( n_{O,P},p_{O,P}\right)  \\
+p_{O_{3}},p_{O_{4}} &\sim &D_{O,E}=Mult\left( n_{O,E},p_{O,E}\right)  \\
+p_{O_{5}},p_{O_{6}} &\sim &D_{O,T}.=Mult\left( n_{O,T},p_{O,T}\right) .
+\end{eqnarray*}%
+For each time step $t$ and each observer node $i=1,2,...,6$, we draw a sample%
+\begin{equation*}
+O_{i,t}\sim Mult\left( n_{O_{i}},p_{O_{i}}\right) 
+\end{equation*}%
+which will serve to tell us how the observer will pass on their observations
+to the reporter. We'll start with $n_{O_{i}}=5$ for all nodes, and crank
+this up as needed to make learning faster. 
+
+\subsubsection{When do we observe?}
+
+For each observer $O_{i}$, during our initialization we'll draw $%
+t_{O_{i},P},t_{O_{i},E},t_{O_{i},T}~\symbol{126}Uniform((0,1))$, which will
+serve as the parameters for the Bernoulli decision to report or not report
+about each topic each round. 
+
+Each observer takes note of the three event values and retransmits them to
+the reporter according to the following system:%
+\begin{eqnarray*}
+\text{For } &&\text{each topic }j=1,2,3\text{:} \\
+\text{If }\tau  &>&threshold\text{ for }\tau \sim \text{~}%
+Bernoulli(t_{O_{i},j})\text{:} \\
+&&\text{If }O_{i,t}[j]>0\text{, pass on the true event value} \\
+&&\text{Otherwise, pass on }1\text{ or }0\text{ with equal probability.}
+\end{eqnarray*}
+
+\section{Outline}
+
+Task 1 is to learn the trustworthiness of each node $O_{i}$ with respect to
+each topic by forming clusters that agree by consensus.
+
+For Task 2 after Task 1 is complete at time step $t_{k}$ we introduce a new
+observer $O_{n}$ whose bias has been sampled randomly according to one of
+the three strategies described above. The task will be to learn the bias of $%
+O_{n}$ in as few time steps as possible. 
+
+The following steps are necessary.
+
+\begin{enumerate}
+\item Construct a Python environment using PyMC and other relevant libraries.
+
+\item Create the model described above.
+
+\item Using a simple Monte Carlo approach, repeatedly propagate information
+through the network and observe how many iterations are required to be run
+before the reporter learns the correct credibility information up to a given
+threshold, completing Task 1.
+
+\item Similarly simulate Task 2.
+\end{enumerate}
+
+\bigskip 
+
+Once these have been completed, if extra time is available, we will
+investigate how sensitive this model is to changes in the various parameters
+and thresholds employed.
+
+\section{Related work and Bibliographic Notes}
+
+1. In recent years, efforts to understand how news information propagates in
+a network have largely focused on social networks. In \cite%
+{zafarani2015evaluation} we find this problem approached in a way that
+explicitly admits that ground truth is unavailable, which inspired our
+consensus-based approach. In general, ground truth is so rarely available in
+real-world settings that it is somewhat irrelevant in the context of news
+reporting. Social media analysis has seen some success in this area of
+analysis. Examples of successful work include trust explorations like \cite%
+{heuer2018trust}, and uncovering social dynamics essential to adoption of
+new technology, like in \cite{kohler2001density}.
+
+2. Analysis of how credibility is changed within a network of communicating
+agents is often connected to the concept of belief propagation, a term used
+both for the idea in general of spreading beliefs, but also specifically
+applied to the sum-product algorithm for this purpose pioneered by Judea
+Pearl. A useful survey on this subject is provided in \cite%
+{yedidia2003understanding}.
+
+3. Storing and using knowledge in a probabilistic graphical framework is
+usually the realm of knowledge graphs. For a fairly thorough source that
+introduces knowledge graphs and their applications, we refer to \cite%
+{hogan2021knowledge}. Another name this problem falls under is "information
+fusion," which has begun to be applied to text-based problems as well,
+making it an important keyword for this project.  We are still investigating 
+\cite{levchuk2015probabilistic} and \cite{radev2000common} to better
+understand how these concepts fold into this project.
+
+For general information about Probabilistic Graphical Models, we will refer
+to the course text, \cite{koller2009probabilistic}.
+
+\bibliographystyle{amsplain}
+\bibliography{acompat,JHU}
+
+\end{document}
