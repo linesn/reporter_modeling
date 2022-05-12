@@ -9,7 +9,7 @@
 %TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
 %TCIDATA{BibliographyScheme=BibTeX}
 %TCIDATA{Created=Thursday, February 18, 2021 13:39:50}
-%TCIDATA{LastRevised=Saturday, May 07, 2022 23:48:09}
+%TCIDATA{LastRevised=Thursday, May 12, 2022 13:22:21}
 %TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
 %TCIDATA{<META NAME="DocumentShell" CONTENT="Articles\SW\AMS Journal Article">}
 %TCIDATA{Language=American English}
@@ -84,8 +84,9 @@ In this case, the probability of the observer stating the value $1$ is the
 sum of the probability of this occurring given all possible immediate parent
 variable combinations, 
 \begin{eqnarray*}
-P\left( o^{1}\right)  &=&\sum_{i,j,k}P\left( o^{1},a^{i},f^{j},r^{k}\right) 
-\\
+P\left( o^{1}\right)  &=&\int_{i,j,k,l,m}P\left(
+o^{1},a^{i},f^{j},r^{k},\beta ^{l},\delta ^{m}\right) =\int_{i,j,k}P\left(
+o^{1},a^{i},f^{j},r^{k}\right)  \\
 &=&P\left( o^{1},a^{1},f^{1},r^{1}\right) +P\left(
 o^{1},a^{1},f^{1},r^{0}\right) +P\left( o^{1},a^{0},f^{1},r^{1}\right)
 +P\left( o^{1},a^{0},f^{0},r^{1}\right)  \\
@@ -95,9 +96,9 @@ o^{1}\mid a^{0},r^{1}\right) P\left( a^{0},r^{1}\right)
 \end{eqnarray*}%
 Here we may use the independence of the parent variables to simplify,%
 \begin{eqnarray*}
-P\left( o^{1}\right)  &=&P\left( o^{1}\mid a^{1},f^{1}\right) P\left(
-a^{1}\right) P\left( f^{1}\right) +P\left( o^{1}\mid a^{0},r^{1}\right)
-P\left( a^{0}\right) P\left( r^{1}\right)  \\
+P\left( o^{1}\mid \beta ,\delta \right)  &=&P\left( o^{1}\mid
+a^{1},f^{1}\right) P\left( a^{1}\right) P\left( f^{1}\right) +P\left(
+o^{1}\mid a^{0},r^{1}\right) P\left( a^{0}\right) P\left( r^{1}\right)  \\
 &=&\left( 1\right) \left( \beta \right) \left( \delta \right) +\left(
 1\right) \left( 1-\beta \right) \left( \frac{1}{2}\right)  \\
 &=&\beta \delta +\frac{1}{2}-\frac{1}{2}\beta  \\
@@ -105,22 +106,41 @@ P\left( a^{0}\right) P\left( r^{1}\right)  \\
 \end{eqnarray*}%
 Similarly we find%
 \begin{eqnarray*}
-P\left( o^{0}\right)  &=&P\left( o^{0}\mid a^{1},f^{0}\right) P\left(
-a^{1}\right) P\left( f^{0}\right) +P\left( o^{0}\mid a^{0},r^{0}\right)
-P\left( a^{0}\right) P\left( r^{0}\right)  \\
+P\left( o^{0}\mid \beta ,\delta \right)  &=&P\left( o^{0}\mid
+a^{1},f^{0}\right) P\left( a^{1}\right) P\left( f^{0}\right) +P\left(
+o^{0}\mid a^{0},r^{0}\right) P\left( a^{0}\right) P\left( r^{0}\right)  \\
 &=&\left( 1\right) \left( \beta \right) \left( 1-\delta \right) +\left(
 1\right) \left( 1-\beta \right) \left( \frac{1}{2}\right)  \\
 &=&\beta \left( 1-\delta \right) +\frac{1}{2}-\frac{1}{2}\beta  \\
 &=&\beta \left( \frac{1}{2}-\delta \right) +\frac{1}{2}.
 \end{eqnarray*}%
+Let's consider the marginalization of this probability given the assumption
+that $\beta ,\delta $ are both uniform random between 0 and 1. This gives us 
+\begin{eqnarray*}
+P\left( o^{0}\right)  &=&\int_{l,m}P\left( o^{0}\mid \beta ^{l},\delta
+^{m}\right) P\left( \beta ^{l},\delta ^{m}\right) dldm \\
+&=&\int_{m}\int_{l}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}\right)
+P\left( \beta ^{l}\right) P\left( \delta ^{m}\right) dldm \\
+&=&\int_{m}\int_{l}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}\right)
+\left( 1\right) \left( 1\right) dldm \\
+&=&\int_{m}\int_{l}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}\right)
+dldm \\
+&=&\int_{0}^{1}\int_{0}^{1}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}%
+\right) dldm \\
+&=&\frac{1}{4}lm\left( l-lm+2\right) |_{l,m=0}^{l,m=1} \\
+&=&\frac{1}{2}
+\end{eqnarray*}
+
 We next compute%
 \begin{eqnarray*}
-P\left( a^{1}\mid o^{1}\right)  &=&\frac{P\left( a^{1},o^{1}\right) }{%
-P\left( o^{1}\right) } \\
-&=&\frac{P\left( o^{1}\mid a^{1}\right) P\left( a^{1}\right) }{P\left(
-o^{1}\right) } \\
-&=&\frac{\left[ P\left( o^{1}\mid a^{1},f^{1}\right) +P\left( o^{1}\mid
-a^{1},f^{0}\right) \right] P\left( a^{1}\right) }{P\left( o^{1}\right) } \\
+P\left( a^{1}\mid o^{1},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{1}\mid \beta ,\delta \right) }{P\left( o^{1}\mid \beta ,\delta
+\right) } \\
+&=&\frac{P\left( o^{1}\mid a^{1},\beta ,\delta \right) P\left( a^{1}\mid
+\beta ,\delta \right) }{P\left( o^{1}\mid \beta ,\delta \right) } \\
+&=&\frac{\left[ P\left( o^{1}\mid a^{1},f^{1},\beta ,\delta \right) +P\left(
+o^{1}\mid a^{1},f^{0},\beta ,\delta \right) \right] P\left( a^{1}\mid \beta
+\right) }{P\left( o^{1}\mid \beta ,\delta \right) } \\
 &=&\frac{\left[ 1+0\right] \beta }{\beta \left( \delta -\frac{1}{2}\right) +%
 \frac{1}{2}} \\
 &=&\frac{\beta }{\beta \left( \delta -\frac{1}{2}\right) +\frac{1}{2}} \\
@@ -128,8 +148,9 @@ a^{1},f^{0}\right) \right] P\left( a^{1}\right) }{P\left( o^{1}\right) } \\
 \end{eqnarray*}%
 And similarly,%
 \begin{eqnarray*}
-P\left( a^{1}\mid o^{0}\right)  &=&\frac{P\left( a^{1},o^{0}\right) }{%
-P\left( o^{0}\right) } \\
+P\left( a^{1}\mid o^{1},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{1}\mid \beta ,\delta \right) }{P\left( o^{1}\mid \beta ,\delta
+\right) } \\
 &=&\frac{P\left( o^{0}\mid a^{1}\right) P\left( a^{1}\right) }{P\left(
 o^{0}\right) } \\
 &=&\frac{\left[ P\left( o^{0}\mid a^{1},f^{0}\right) +P\left( o^{0}\mid
@@ -143,19 +164,95 @@ a^{1},f^{1}\right) \right] P\left( a^{1}\right) }{P\left( o^{0}\right) } \\
 Now we wish to consider a Bayesian belief update where we use an observation
 of $o$ to change our opinion about the value of $\beta $. We manipulate%
 \begin{eqnarray*}
-P\left( a^{1}\mid o^{0}\right)  &=&\frac{1}{\frac{1}{2}-\delta +\frac{1}{%
-2\beta }} \\
-\frac{1}{2\beta } &=&\frac{1}{P\left( a^{1}\mid o^{0}\right) }-\frac{1}{2}%
-+\delta  \\
-2\beta  &=&\frac{1}{\frac{1}{P\left( a^{1}\mid o^{0}\right) }-\frac{1}{2}%
-+\delta } \\
-\beta  &=&\frac{1}{2\left( \frac{1}{P\left( a^{1}\mid o^{0}\right) }-\frac{1%
-}{2}+\delta \right) }
+P\left( a^{1}\mid o^{0},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{0}\mid \beta ,\delta \right) }{P\left( o^{0}\mid \beta ,\delta
+\right) } \\
+\frac{1}{2\beta } &=&\frac{1}{P\left( a^{1}\mid o^{0},\beta ,\delta \right) }%
+-\frac{1}{2}+\delta  \\
+2\beta  &=&\frac{1}{\frac{1}{P\left( a^{1}\mid o^{0},\beta ,\delta \right) }-%
+\frac{1}{2}+\delta } \\
+\beta  &=&\frac{1}{2\left( \frac{1}{P\left( a^{1}\mid o^{0},\beta ,\delta
+\right) }-\frac{1}{2}+\delta \right) }
 \end{eqnarray*}%
 We do not know $\delta $, but using a consensus of multiple observers over
 multiple draws of $f$ we can approximate it. We can start with a
 uninformative prior (uniform over $\left[ 0,1\right] $) and update this via
 Bayes theorem.
+
+\section{Stopping criterion}
+
+We need some way to say we have learned enough about the reporter's
+awareness bias $\beta $ to prune them. 
+
+\subsection{Converging probability of $\protect\beta ?$}
+
+In the model where one observer over $n_{t}$ time steps provides
+observations, with all the "failed to report"\ data removed, we have shown
+through variable elimination that 
+\begin{eqnarray*}
+P\left( o_{t}^{1}\mid a_{t},f_{t},r_{t},\beta ,\delta \right)  &=&P\left(
+o_{t}^{1}\mid \beta ,\delta \right) =\beta \left( \delta -\frac{1}{2}\right)
++\frac{1}{2}, \\
+P\left( o_{t}^{0}\mid a_{t},f_{t},r_{t},\beta ,\delta \right)  &=&P\left(
+o_{t}^{0}\mid \beta ,\delta \right) =\beta \left( \frac{1}{2}-\delta \right)
++\frac{1}{2}.
+\end{eqnarray*}%
+So the probability of reporting outcomes is independent of the time step and
+all variables contained within that time step. Let 
+\begin{equation*}
+E=\left\{ o_{t}\right\} _{t=1}^{n_{t}}
+\end{equation*}%
+be the evidence, the sequence of realizations observed. Let $N_{0}$ and $%
+N_{1}$ be the numbers of 0's and 1's observed in this sequence,%
+\begin{equation*}
+N_{v}=\#\left\{ o_{t}:o_{t}=v\right\} _{t=1}^{n_{t}}.
+\end{equation*}%
+Then
+
+\begin{eqnarray*}
+P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid o_{t}^{1}\right)  &=&%
+\frac{P\left( o_{t}^{1}\mid \beta =\hat{\beta},\delta =\hat{\delta}\right)
+P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{t-1}\right) }{P\left(
+o_{t}^{1}\right) } \\
+&=&\frac{\left( \hat{\beta}\left( \hat{\delta}-\frac{1}{2}\right) +\frac{1}{2%
+}\right) P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{t-1}\right) 
+}{0.5} \\
+&=&2\left( \hat{\beta}\left( \hat{\delta}-\frac{1}{2}\right) +\frac{1}{2}%
+\right) P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{t-1}\right) 
+\end{eqnarray*}
+
+\bigskip 
+\begin{eqnarray*}
+P\left( E\mid \beta ,\delta \right)  &=&\prod_{t=1}^{n_{t}}P\left( o_{t}\mid
+\beta ,\delta \right)  \\
+&=&\prod_{k=1}^{N_{0}}P\left( o_{k}^{0}\mid \beta ,\delta \right)
+\prod_{k=1}^{N_{1}}P\left( o_{k}^{1}\mid \beta ,\delta \right)  \\
+&=&\prod_{k=1}^{N_{0}}\left( \beta \left( \frac{1}{2}-\delta \right) +\frac{1%
+}{2}\right) \prod_{k=1}^{N_{1}}\left( \beta \left( \delta -\frac{1}{2}%
+\right) +\frac{1}{2}\right) .
+\end{eqnarray*}
+
+\begin{eqnarray*}
+P\left( \beta =\hat{\beta}\mid E\right)  &=&\frac{P\left( E\mid \beta =\hat{%
+\beta}\right) P\left( \beta =\hat{\beta}\right) }{P\left( E\right) } \\
+&=&\frac{P\left( E\mid \beta =\hat{\beta}\right) 1}{P\left( E\right) }
+\end{eqnarray*}
+
+\begin{equation*}
+\int_{0}^{1}\left( B\left( d-\frac{1}{2}\right) +\frac{1}{2}\right)
+^{N}\left( B\left( \frac{1}{2}-d\right) +\frac{1}{2}\right) ^{M}dB
+\end{equation*}
+
+\begin{eqnarray*}
+&&\int_{0}^{1}\left( B\left( d-\frac{1}{2}\right) +\frac{1}{2}\right)
+^{N_{1}}\left( B\left( \frac{1}{2}-d\right) +\frac{1}{2}\right) ^{N_{0}}dB \\
+&&\int_{0}^{1}\left( \frac{1}{2}+B\left( d-\frac{1}{2}\right) \right) \left( 
+\frac{1}{2}-B\left( d-\frac{1}{2}\right) \right) ^{N_{0}}dB
+\end{eqnarray*}
+
+$\left( \frac{1}{2}+B\left( d-\frac{1}{2}\right) \right) \left( \frac{1}{2}%
+-B\left( d-\frac{1}{2}\right) \right) =\frac{1}{4}-B^{2}\left( d-\frac{1}{2}%
+\right) ^{2}$
 
 \bibliographystyle{amsplain}
 \bibliography{acompat,JHU}
