@@ -129,9 +129,10 @@ dmypy.json
 .pyre/
 
 # tex
-.dvi
-.blg
-.aaa
-.bak
-.aux
-.bbl
+*.dvi
+*.blg
+*.aaa
+*.aab
+*.bak
+*.aux
+*.bbl
