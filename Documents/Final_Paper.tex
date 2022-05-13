@@ -2,7 +2,8 @@
 \documentclass{amsart}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{amsfonts}
-\usepackage{hyperref}
+\usepackage{color}
+\usepackage[pdftex]{hyperref}
 
 \setcounter{MaxMatrixCols}{10}
 %TCIDATA{OutputFilter=LATEX.DLL}
@@ -10,9 +11,10 @@
 %TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
 %TCIDATA{BibliographyScheme=BibTeX}
 %TCIDATA{Created=Thursday, May 12, 2022 21:29:02}
-%TCIDATA{LastRevised=Friday, May 13, 2022 15:25:29}
+%TCIDATA{LastRevised=Friday, May 13, 2022 19:17:26}
 %TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
 %TCIDATA{<META NAME="DocumentShell" CONTENT="Articles\SW\AMS Journal Article">}
+%TCIDATA{Language=American English}
 %TCIDATA{CSTFile=amsartci.cst}
 
 \newtheorem{theorem}{Theorem}
@@ -54,7 +56,14 @@ EN.625.692.81.SP22 Probabilistic Graphical Models, for Johns Hopkins
 University.}
 
 \begin{abstract}
-Replace this text with your own abstract.
+Learning information through unreliable observers is difficult. In news
+creation and consumption we encounter problems of this sort, in which
+information from various observers of differing awareness levels must be
+fused and processed. We introduce a model for news-related information
+digestion and consider several methods for weighting or eliminating sources
+by credibility levels. We implement this in Python and compare PyMC3's
+approximate parameter inference results with tailored estimators, and
+discuss variations of this model.
 \end{abstract}
 
 \maketitle
@@ -82,7 +91,7 @@ sources. Self-filtering news data is a difficult challenge, involving both
 bias in the sources consulted, bias introduced by those sources, and bias in
 credibility assessment introduced by the actor.
 
-In this paper we introduce a probabilistic graphical framework in which we
+In this paper we propose a probabilistic graphical framework with which we
 can explore information fusion tasks. This proposed approach is elementary,
 but it has the potential to develop as a tool to compliment human
 credibility assessment of news information sources. We note that the goal of
@@ -146,19 +155,19 @@ Secondarily, the analyst wishes to "weed out" observations that are
 unhelpful. If an observer consistently disagrees with the general consensus
 on a topic, that observer does not need to be surveyed on that topic, or
 perhaps their response should be weighted low, proportionate in some way to
-the trust they have acrued.
+the trust they have accrued.
 
 We will now introduce a Bayesian network that generatively models this
 situation with certain constraints. In particular we will only consider
 binary facts related to each topic.
 
 \begin{definition}
-Reporter Model A: Let $n_{j}$ be the number of news topics of interest, $%
-n_{i}$ the number of observers, and $n_{t}$ the number of timesteps in the
-modeled timeframe. For each topic $j=1,\dots ,n_{j}$ we assume that news
-topic has a bias 
+\label{d1}\textbf{Reporter Model A}: Let $n_{j}$ be the number of news
+topics of interest, $n_{i}$ the number of observers, and $n_{t}$ the number
+of timesteps in the modeled timeframe. For each topic $j=1,\dots ,n_{j}$ we
+assume that news topic has a bias 
 \begin{equation*}
-\delta _{j}\sim ~Uniform\left( 0,1\right)
+\delta _{j}\sim ~Uniform\left( 0,1\right) 
 \end{equation*}%
 that indicates preference toward a fact value of $1$. At each time step $%
 t=1,\dots ,n_{t}$ a new fact is generated%
@@ -176,7 +185,7 @@ and an awareness level for this topic,%
 \end{equation*}%
 At each timestep they draw a decision about whether to report%
 \begin{equation*}
-\tau _{i,j,t}\sim ~Bernoulli\left( \varepsilon _{i,j}\right)
+\tau _{i,j,t}\sim ~Bernoulli\left( \varepsilon _{i,j}\right) 
 \end{equation*}%
 and draw to decide if they are aware of the current fact%
 \begin{equation*}
@@ -189,9 +198,9 @@ r_{i,j,t}\sim ~Bernoulli\left( \frac{1}{2}\right) .
 The observer then computes%
 \begin{equation*}
 o_{i,j,t}=\tau _{i,j,t}\left( \alpha _{i,j,t}f_{j,t}+\left( 1-\alpha
-_{i,j,t}r_{i,j,t}\right) \right) +2\left( 1-\tau _{i,j,t}\right)
+_{i,j,t}r_{i,j,t}\right) \right) +2\left( 1-\tau _{i,j,t}\right) 
 \end{equation*}%
-which is their observation passed on to the analyst. This means that if
+which is their observation passed on to the analyst. This means that if the
 observer is aware and willing to report, they pass on the true fact. If they
 are aware but unwilling to report, they pass on the value $2$, which means
 nothing was reported. If they are willing to report but unaware of the fact,
@@ -216,7 +225,7 @@ inference challenges, as we will discuss later. This model makes some strict
 assumptions we should review. The uniform priors for the observer parameters
 and the topic bias are uninformative, and represent a first investigation.
 More informative distributions might be available in certain circumstances.
-We also note that the problem of infering $\beta _{i,j}$ becomes more
+We also note that the problem of inferring $\beta _{i,j}$ becomes more
 difficult if $\left\vert \delta _{j}-\frac{1}{2}\right\vert $ grows too
 small, since the $f_{j,t}$ input will become indistinguishable from the
 random noise $r_{i,j,t}$.
@@ -224,8 +233,8 @@ random noise $r_{i,j,t}$.
 We are interested first in the quality of $b_{j,t}$ as an estimator for $%
 f_{j,t}$. Second, we wish to recover or at least bound the awareness biases $%
 \beta _{i,j}$ so we may downweight or ignore unaware observers in the
-future. The task of infering $\varepsilon _{i,j}$ is of minimal interest but
-happens to be particularly simple.
+future. The task of inferring $\varepsilon _{i,j}$ is of minimal interest
+but happens to be particularly simple.
 
 One of the principal advantages to this model is that it breaks easily into
 independent subgraphs. For example, all variables associated with each topic 
@@ -236,15 +245,15 @@ inference within each topic network separately.
 
 Before we make any subtle approach at parameter recovery, we consider how
 well a blunt particle-based parameter estimation method can do. Using PyMC3,
-we use the No U-Turns Sampler (NUTS), a Hamiltonian Monte Carlo approach to
-estimate $\varepsilon _{i,j},\beta _{i,j}$ and $\delta _{j}$, while applying
-the Binary Gibbs Metropolis Sampler (BGMS) to recover $f_{j,t},\alpha
-_{i,j,t},$ and $\tau _{i,j,t}$. The details are shown in Appendix C. For
-this experiment, we set the number of observers to $n_{i}=20$, the number of
-timesteps to $n_{t}=100$, and restrict our review to a single topic, $%
-n_{j}=1 $. We ran 1000 samples, with 1000 burn-in (tuning) time steps, which
-took roughly 1.5 hours on a 4-core Linux machine. The results are summarized
-in Figure \ref{PYMC3}\ below.
+we apply the No U-Turns Sampler (NUTS), a Hamiltonian Monte Carlo approach
+to estimate $\varepsilon _{i,j},\beta _{i,j}$ and $\delta _{j}$, while
+utilizing the Binary Gibbs Metropolis Sampler (BGMS) to recover $%
+f_{j,t},\alpha _{i,j,t},$ and $\tau _{i,j,t}$. The details are shown in
+Appendix C. For this experiment, we set the number of observers to $n_{i}=20$%
+, the number of timesteps to $n_{t}=100$, and restrict our review to a
+single topic, $n_{j}=1$. We ran 1000 samples, with 1000 burn-in (tuning)
+time steps, which took roughly 1.5 hours on a 4-core Linux machine. The
+results are summarized in Figure \ref{PYMC3}\ below.
 
 \FRAME{ftbphFU}{5.546in}{3.7066in}{0pt}{\Qcb{The results of the PyMC3
 experiment recovering parameters for Model A. The plots on the left show the
@@ -268,9 +277,20 @@ TRUE;display "USEDEF";valid_file "F";width 6.0597in;height 4.0491in;depth
 0pt;original-width 6.0001in;original-height 3.9998in;cropleft "0";croptop
 "1";cropright "1";cropbottom "0";filename
 '../Images/betahat.jpg';file-properties "XNPEU";}}This particle-based
-approach represents a baseline for the approximate inference that does not
-take advantage of the details of the model, and we will see that we can
-improve upon it.
+approach represents a baseline for approximate inference that does not take
+advantage of the details of the model, and we will see that we can improve
+upon it.
+
+An interesting limitation of PyMC3 is shown in this demonstration: it cannot
+model observations from deterministic variables. In our case $o_{i,j,t}$ is
+deterministic in that it is entirely determined as a logical combination of
+stochastic variables. PyMC3 cannot sample from this, so an unattractive
+stopgap is commonly used in such cases. We define a new random variable 
+\begin{equation*}
+X_{i,j,t}\sim ~Normal\left( \mu =o_{i,j,t},\sigma =0.01\right) ,
+\end{equation*}%
+which we can sample from. This introduces minimal variance, and overcomes
+the obstacle.
 
 \section{Improved Estimators}
 
@@ -283,7 +303,7 @@ reporting_network_j.jpg}{\special{language "Scientific Word";type
 "GRAPHIC";maintain-aspect-ratio TRUE;display "USEDEF";valid_file "F";width
 6.704in;height 3.7048in;depth 0pt;original-width 8.9404in;original-height
 4.9242in;cropleft "0";croptop "1";cropright "1";cropbottom "0";filename
-'../Images/reporting_network_j.jpg';file-properties "XNPEU";}}Next we reduce
+'../Images/reporting_network_j.jpg';file-properties "XNPEU";}}Next we
 consider only the contributions of a single observer $\bar{\imath}$, shown
 in Figure \ref{rij}. 
 
@@ -315,9 +335,10 @@ reporting_network_ijtau.jpg}{\special{language "Scientific Word";type
 '../Images/reporting_network_ijtau.jpg';file-properties "XNPEU";}}
 
 We may comprehensively describe the probability distribution for $o_{t}$
-under these conditions using a probability table since this depends only on
-binary variables. We recall that the parameter of each Bernoulli random
-variable represents the probability that variable equals one. 
+under these conditions using the probability table, Table \ref{TableKey},
+since this depends only on binary variables. We recall that the parameter of
+each Bernoulli random variable represents the probability that variable
+equals one. 
 
 %TCIMACRO{\TeXButton{B}{\begin{table}[tbp] \centering}}%
 %BeginExpansion
@@ -455,15 +476,15 @@ absolute relative change has dropped below a threshold $h\approx 0.1$. If
 \left\vert \frac{\hat{\beta}_{i,j,t}-\hat{\beta}_{i,j,t-1}}{\hat{\beta}%
 _{i,j,t-1}}\right\vert \leq h\text{ AND }\hat{\beta}_{i,j,t}\leq \aleph 
 \end{equation*}%
-both hold, we mark the observer $i$ as pruned. This is slow in practice if
-we compute $\hat{\beta}_{i,j,t}$ at every time step $t$, but produces clean
+hold, we mark the observer $i$ as pruned. This is slow in practice if we
+compute $\hat{\beta}_{i,j,t}$ at every time step $t$, but produces clean
 results. It also gives us a sense of "how"\ untrustworthy an observer was,
 since we have a clear sense of when they were pruned: earlier pruning
 represents more egregiously low awareness.
 
 \subsection{Markovian Reduction}
 
-We will now consider simple approach to reduction that requires minimal
+We will now consider a simple approach to reduction that requires minimal
 memory. We start by choosing a reduction constant $\rho \approx 0.95$. We
 begin the algorithm at $t=0$ with a weight of $1$ for all observers. At each
 timestep $t$ we compute the weighted vote of all observers, and mark all
@@ -471,6 +492,13 @@ observers who disagreed with this consensus. We multiply the weights of all
 incorrect observers by $\rho $, and continue to timestep $t+1$. The result
 is that consistently poor performers lose their influence over the group
 vote over time.
+
+The parameter $\rho $ is sensitive: if the parameter is too low, it will
+result in a single observer emerging as the "most trusted"\ observer, whose
+vote is law. If the parameter is too high, the observers will not be
+separated as quickly. In future work, we may wish to investigate the
+relationship between choices of $\rho ,n_{i},$ and $n_{t}$, to identify
+ideal parameter ranges for distinguishing observer awareness.
 
 In our formulation of Reporter Model A we defined the $\beta $ priors to be
 static, so there is no reason to think that later errors are more severe
@@ -483,9 +511,133 @@ topic.
 
 \section{Toward a Better Pruning Stopping Criterion}
 
+We previously discussed pruning when the estimate for $\hat{\beta}_{i,j,t}$
+converges, but it would perhaps be preferable if we could stop and prune
+when $P\left( \beta _{i,j,t}=\hat{\beta}_{i,j,t}\right) $ reaches a
+threshold. As we consider this possibility, for brevity we will use the
+convention $x^{v}$ to represent the random variable assignment $x=v$ where $v
+$ is in the set of possible values of $x$.
+
+Let us return to the simplification where one observer over $n_{t}$ time
+steps provides observations, with all the "failed to report"\ data removed.
+We can show that the following holds via variable elimination. 
+
+\begin{theorem}
+\label{t1}In the simplification of Reporter Model A in which a single
+observer provides input for a single topic, the observations for any given
+time step $t$ have the following distribution%
+\begin{eqnarray*}
+P\left( o_{t}^{1}\mid a_{t},f_{t},r_{t},\beta ,\delta \right)  &=&P\left(
+o_{t}^{1}\mid \beta ,\delta \right) =\beta \left( \delta -\frac{1}{2}\right)
++\frac{1}{2}, \\
+P\left( o_{t}^{0}\mid a_{t},f_{t},r_{t},\beta ,\delta \right)  &=&P\left(
+o_{t}^{0}\mid \beta ,\delta \right) =\beta \left( \frac{1}{2}-\delta \right)
++\frac{1}{2}.
+\end{eqnarray*}%
+Furthermore, $P\left( o_{t}^{1}\right) =P\left( o_{t}^{0}\right) =\frac{1}{2}%
+.$
+\end{theorem}
+
+This is established by Proof 1 in Appendix A. 
+
+Thus the probability of reporting outcomes is independent of the time step
+and all variables contained within that time step. Let 
+\begin{equation*}
+E=\left\{ o_{t}\right\} _{t=1}^{n_{t}}
+\end{equation*}%
+be the evidence, the sequence of realizations observed. Let $N_{0}$ and $%
+N_{1}$ be the numbers of 0's and 1's observed in this sequence,%
+\begin{equation*}
+N_{v}=\#\left\{ o_{t}:o_{t}^{v}\right\} _{t=1}^{n_{t}}.
+\end{equation*}%
+Then Bayes' law gives us
+
+\begin{eqnarray*}
+P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid o_{t}^{1}\right)  &=&%
+\frac{P\left( o_{t}^{1}\mid \beta =\hat{\beta},\delta =\hat{\delta}\right)
+P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{t-1}\right) }{P\left(
+o_{t}^{1}\right) } \\
+&=&\frac{\left( \hat{\beta}\left( \hat{\delta}-\frac{1}{2}\right) +\frac{1}{2%
+}\right) P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{t-1}\right) 
+}{0.5} \\
+&=&2\left( \hat{\beta}\left( \hat{\delta}-\frac{1}{2}\right) +\frac{1}{2}%
+\right) P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{t-1}\right) .
+\end{eqnarray*}%
+At time $t=0$ we have the uninformative prior, 
+\begin{equation*}
+P\left( \beta =\hat{\beta},\delta =\hat{\delta}\mid E_{0}\right) =P\left(
+\beta =\hat{\beta}\mid E_{0}\right) P\left( \delta =\hat{\delta}\mid
+E_{0}\right) =1.
+\end{equation*}%
+We can use Bayesian updates at each time step to develop a posterior
+distribution for $\beta $ under the condition $\delta =\hat{\delta}_{t}$.
+This means that we can halt at time $t$ if $P\left( \beta =\hat{\beta}%
+_{t}\mid \delta =\hat{\delta}_{t},E_{t-1}\right) $ stabilizes (in a
+Kullback-Leibler sense) and prune this observer if $\hat{\beta}_{t}\leq
+\aleph $.
+
+This is computationally expensive compared to our other approaches, and is
+not yet implemented in our code.
+
 \section{Alternate Formulations and Future Work}
 
+The Reporter Model A we have described has broad applications, but is not
+universally suitable, so it behooves us to consider minor alterations that
+fulfill similar needs. One such alteration we encountered early on when
+applying Model A is described below. We motivate this model as follows.
+Suppose our news analyst is interested in a set of topic states $\left\{
+\delta _{j}\right\} _{j=1}^{n_{j}}.$ For example, each may represent the
+disaster readiness level of a state in the United States. The observers,
+rather than all encountering the same binary fact each timestep, now
+encounter individual facts. This might model a situation where each observer
+asks yes-or-no-questions of a representative of each state. 
+
+\begin{definition}
+\textbf{Reporter Model B:} We define this precisely the same as Reporter
+Model A in Definition \ref{d1} except that the facts $f_{i.j.t}$ are now
+within the observer loop, meaning they are unique to each observer. This
+model is shown in \autoref{B}.
+\end{definition}
+
+\FRAME{ftbpFU}{6.5561in}{3.7066in}{0pt}{\Qcb{Reporter Model B}}{\Qlb{B}}{%
+reporting_networkb.jpg}{\special{language "Scientific Word";type
+"GRAPHIC";maintain-aspect-ratio TRUE;display "USEDEF";valid_file "F";width
+6.5561in;height 3.7066in;depth 0pt;original-width 9.0183in;original-height
+5.0816in;cropleft "0";croptop "1";cropright "1";cropbottom "0";filename
+'../Images/reporting_networkB.jpg';file-properties "XNPEU";}}
+
+In this model, we are no longer interested in the individual facts $f_{i,j,t}
+$, but instead wish to recover $\delta _{j}$. This model has several
+computational advantages, since it now presents plates (i.e. for-loops)\
+that are strictly ordered as subsets. This is advantageous for some
+probabilistic languages (including PyMC3).
+
+In our code we have implemented but not exhaustively tested the discussed
+reduction strategies. In future work we wish to evaluate these methods more
+thoroughly, including probability-based pruning. An element from real-life
+which our models do not replicate is the concept of finding new information
+sources. Finding new sources to replace less informed observers would be
+extremely useful, and could transform this problem into an explore versus
+exploit task, much like a multi-armed-bandit problem. 
+
+Finally, the most important difference between our model and real-life
+situations we wish to examine is that news is rarely expressed as binary
+facts. Applying our work to a real-world situation would require
+accomplishing numerous fact-extraction and fact-matching tasks within the
+realm of natural language processing. We hope that these models we discussed
+are sufficiently portable that such a text-to-fact tool could plug into the
+models with minimal structural changes.
+
 \section{Conclusion}
+
+The model(s) proposed in this paper represents only a beginning of this type
+of investigation, and we feel optimistic that more efforts in this vein will
+follow. The human brain has hitherto been assigned the work of sorting and
+prioritizing information sources almost exclusively, but cognitive
+thresholds, if they have not yet been exceeded by news volume, soon will be.
+In such a setting it will be invaluable for news analysts and news readers
+alike to become equipped with tools that triage their media exposure using
+credibility assessments and other features of the media and its sources.
 
 \newpage
 
@@ -495,14 +647,156 @@ topic.
 \newpage
 
 %TCIMACRO{%
-%\TeXButton{appendix}{\section*{Appendix A. Supplemental Derivations}
-%}}%
+%\TeXButton{appendix}{\section*{Appendix A. Supplemental Derivations}}}%
 %BeginExpansion
-\section*{Appendix A. Supplemental Derivations}
-%
+\section*{Appendix A. Supplemental Derivations}%
 %EndExpansion
 
-In the following pages we will reproduce the Python code used to perform the
-analysis described. This consists of
+We first provide a proof for \autoref{t1}.
+
+\begin{proof}[Proof 1]
+\label{A,1}Recall that we have eliminated observations with value 2 (the "no
+report" observations) and are considering one topic and one observer only.
+Let $t$ be any given timestep. The random variables $\alpha _{t},f_{t},$ and 
+$r_{t}$ are Bernoulli, with the parameters $\beta ,\delta ,$ and $\frac{1}{2}
+$. The variable $o$ is produced by computing%
+\begin{equation*}
+o_{t}=\alpha _{t}f_{t}+\left( 1-\alpha _{t}\right) r_{t},
+\end{equation*}%
+which yields the following truth table:%
+\begin{equation*}
+\begin{tabular}{|l|l|l|l|}
+\hline
+$o_{t}$ & $\alpha _{t}$ & $f_{t}$ & $r_{t}$ \\ \hline
+$1$ & $1$ & $1$ & $1$ \\ \hline
+$1$ & $1$ & $1$ & $0$ \\ \hline
+$1$ & $0$ & $1$ & $1$ \\ \hline
+$1$ & $0$ & $0$ & $1$ \\ \hline
+$0$ & $1$ & $0$ & $1$ \\ \hline
+$0$ & $1$ & $0$ & $0$ \\ \hline
+$0$ & $0$ & $1$ & $0$ \\ \hline
+$0$ & $0$ & $0$ & $0$ \\ \hline
+\end{tabular}%
+\end{equation*}%
+In this case, the probability of the observer stating the value $1$ is the
+sum of the probability of this occurring given all possible immediate parent
+variable combinations, 
+\begin{eqnarray*}
+P\left( o_{t}^{1}\mid \alpha _{t},f_{t},r_{t},\beta ,\delta \right) 
+&=&\sum_{i,j,k,l,m}P\left( o_{t}^{1},\alpha
+_{t}^{i},f_{t}^{j},r_{t}^{k},\beta ^{l},\delta ^{m}\right)  \\
+&=&P\left( o^{1},\alpha ^{1},f^{1},r^{1}\right) +P\left( o^{1},\alpha
+^{1},f^{1},r^{0}\right) +P\left( o^{1},\alpha ^{0},f^{1},r^{1}\right)
++P\left( o^{1},\alpha ^{0},f^{0},r^{1}\right)  \\
+&=&P\left( o^{1},\alpha ^{1},f^{1}\right) +P\left( o^{1},\alpha
+^{0},r^{1}\right)  \\
+&=&P\left( o^{1}\mid \alpha ^{1},f^{1}\right) P\left( \alpha
+^{1},f^{1}\right) +P\left( o^{1}\mid \alpha ^{0},r^{1}\right) P\left( \alpha
+^{0},r^{1}\right) 
+\end{eqnarray*}%
+Here we may use the independence of the parent variables to simplify,%
+\begin{eqnarray*}
+P\left( o^{1}\mid \beta ,\delta \right)  &=&P\left( o^{1}\mid \alpha
+^{1},f^{1}\right) P\left( \alpha ^{1}\right) P\left( f^{1}\right) +P\left(
+o^{1}\mid \alpha ^{0},r^{1}\right) P\left( \alpha ^{0}\right) P\left(
+r^{1}\right)  \\
+&=&\left( 1\right) \left( \beta \right) \left( \delta \right) +\left(
+1\right) \left( 1-\beta \right) \left( \frac{1}{2}\right)  \\
+&=&\beta \delta +\frac{1}{2}-\frac{1}{2}\beta  \\
+&=&\beta \left( \delta -\frac{1}{2}\right) +\frac{1}{2}.
+\end{eqnarray*}%
+Similarly we find%
+\begin{eqnarray*}
+P\left( o^{0}\mid \beta ,\delta \right)  &=&P\left( o^{0}\mid \alpha
+^{1},f^{0}\right) P\left( \alpha ^{1}\right) P\left( f^{0}\right) +P\left(
+o^{0}\mid \alpha ^{0},r^{0}\right) P\left( \alpha ^{0}\right) P\left(
+r^{0}\right)  \\
+&=&\left( 1\right) \left( \beta \right) \left( 1-\delta \right) +\left(
+1\right) \left( 1-\beta \right) \left( \frac{1}{2}\right)  \\
+&=&\beta \left( 1-\delta \right) +\frac{1}{2}-\frac{1}{2}\beta  \\
+&=&\beta \left( \frac{1}{2}-\delta \right) +\frac{1}{2}.
+\end{eqnarray*}%
+Let us consider the marginalization of this probability given the assumption
+that $\beta $ and $\delta $ are both uniform random between 0 and 1. This
+gives us 
+\begin{eqnarray*}
+P\left( o^{0}\right)  &=&\int_{l,m}P\left( o^{0}\mid \beta ^{l},\delta
+^{m}\right) P\left( \beta ^{l},\delta ^{m}\right) dldm \\
+&=&\int_{m}\int_{l}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}\right)
+P\left( \beta ^{l}\right) P\left( \delta ^{m}\right) dldm \\
+&=&\int_{m}\int_{l}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}\right)
+\left( 1\right) \left( 1\right) dldm \\
+&=&\int_{m}\int_{l}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}\right)
+dldm \\
+&=&\int_{0}^{1}\int_{0}^{1}\left( l\left( \frac{1}{2}-m\right) +\frac{1}{2}%
+\right) dldm \\
+&=&\frac{1}{4}lm\left( l-lm+2\right) |_{l,m=0}^{l,m=1} \\
+&=&\frac{1}{2}
+\end{eqnarray*}
+\end{proof}
+
+It turns out that the awareness variable may be estimated using what we just
+proved. We simply compute%
+\begin{eqnarray*}
+P\left( a^{1}\mid o^{1},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{1}\mid \beta ,\delta \right) }{P\left( o^{1}\mid \beta ,\delta
+\right) } \\
+&=&\frac{P\left( o^{1}\mid a^{1},\beta ,\delta \right) P\left( a^{1}\mid
+\beta ,\delta \right) }{P\left( o^{1}\mid \beta ,\delta \right) } \\
+&=&\frac{\left[ P\left( o^{1}\mid a^{1},f^{1},\beta ,\delta \right) +P\left(
+o^{1}\mid a^{1},f^{0},\beta ,\delta \right) \right] P\left( a^{1}\mid \beta
+\right) }{P\left( o^{1}\mid \beta ,\delta \right) } \\
+&=&\frac{\left[ 1+0\right] \beta }{\beta \left( \delta -\frac{1}{2}\right) +%
+\frac{1}{2}} \\
+&=&\frac{\beta }{\beta \left( \delta -\frac{1}{2}\right) +\frac{1}{2}} \\
+&=&\frac{1}{\delta -\frac{1}{2}+\frac{1}{2\beta }}.
+\end{eqnarray*}%
+And similarly,%
+\begin{eqnarray*}
+P\left( a^{1}\mid o^{0},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{0}\mid \beta ,\delta \right) }{P\left( o^{0}\mid \beta ,\delta
+\right) } \\
+&=&\frac{P\left( o^{0}\mid a^{1}\right) P\left( a^{1}\mid \beta ,\delta
+\right) }{P\left( o^{0}\right) } \\
+&=&\frac{\left[ P\left( o^{0}\mid a^{1},f^{0}\right) +P\left( o^{0}\mid
+a^{1},f^{1}\right) \right] P\left( a^{1}\mid \beta \right) }{P\left(
+o^{0}\right) } \\
+&=&\frac{\left[ 1+0\right] \beta }{\beta \left( \frac{1}{2}-\delta \right) +%
+\frac{1}{2}} \\
+&=&\frac{\beta }{\beta \left( \frac{1}{2}-\delta \right) +\frac{1}{2}} \\
+&=&\frac{1}{\frac{1}{2}-\delta +\frac{1}{2\beta }}
+\end{eqnarray*}
+
+This lends itself to an alternative updating scheme. We wish to consider a
+Bayesian belief update where we use an observation of $o$ to change our
+opinion about the value of $\beta $. We manipulate%
+\begin{eqnarray*}
+P\left( a^{1}\mid o^{0},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{0}\mid \beta ,\delta \right) }{P\left( o^{0}\mid \beta ,\delta
+\right) } \\
+\frac{1}{2\beta } &=&\frac{1}{P\left( a^{1}\mid o^{0},\beta ,\delta \right) }%
+-\frac{1}{2}+\delta  \\
+2\beta  &=&\frac{1}{\frac{1}{P\left( a^{1}\mid o^{0},\beta ,\delta \right) }-%
+\frac{1}{2}+\delta } \\
+\beta  &=&\frac{1}{2\left( \frac{1}{P\left( a^{1}\mid o^{0},\beta ,\delta
+\right) }-\frac{1}{2}+\delta \right) }
+\end{eqnarray*}%
+We do not know $\delta $, but using a consensus of multiple observers over
+multiple draws of $f$ we can approximate it with $\hat{\delta}$. This gives
+us the estimator%
+\begin{equation*}
+\hat{\beta}_{t}=\frac{1}{2\left( \frac{1}{P\left( a^{1}\mid o^{0},\hat{\beta}%
+_{t-1},\hat{\delta}_{t-1}\right) }-\frac{1}{2}+\hat{\delta}_{t}\right) }
+\end{equation*}%
+We can start with a uninformative prior (uniform over $\left[ 0,1\right] $)
+and update this via Bayes theorem.
+
+%TCIMACRO{%
+%\TeXButton{Appendices}{\addcontentsline{toc}{section}{Appendix B. Code for Reporter Model A}
+%\addcontentsline{toc}{section}{Appendix C. Using PyMC3 for Approximate Parameter Estimation in Reporter Model A }}}%
+%BeginExpansion
+\addcontentsline{toc}{section}{Appendix B. Code for Reporter Model A}
+\addcontentsline{toc}{section}{Appendix C. Using PyMC3 for Approximate Parameter Estimation in Reporter Model A }%
+%EndExpansion
 
 \end{document}
