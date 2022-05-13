@@ -9,7 +9,7 @@
 %TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
 %TCIDATA{BibliographyScheme=BibTeX}
 %TCIDATA{Created=Thursday, February 18, 2021 13:39:50}
-%TCIDATA{LastRevised=Thursday, May 12, 2022 13:22:21}
+%TCIDATA{LastRevised=Thursday, May 12, 2022 21:12:49}
 %TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
 %TCIDATA{<META NAME="DocumentShell" CONTENT="Articles\SW\AMS Journal Article">}
 %TCIDATA{Language=American English}
@@ -148,13 +148,14 @@ o^{1}\mid a^{1},f^{0},\beta ,\delta \right) \right] P\left( a^{1}\mid \beta
 \end{eqnarray*}%
 And similarly,%
 \begin{eqnarray*}
-P\left( a^{1}\mid o^{1},\beta ,\delta \right)  &=&\frac{P\left(
-a^{1},o^{1}\mid \beta ,\delta \right) }{P\left( o^{1}\mid \beta ,\delta
+P\left( a^{1}\mid o^{0},\beta ,\delta \right)  &=&\frac{P\left(
+a^{1},o^{0}\mid \beta ,\delta \right) }{P\left( o^{0}\mid \beta ,\delta
 \right) } \\
-&=&\frac{P\left( o^{0}\mid a^{1}\right) P\left( a^{1}\right) }{P\left(
-o^{0}\right) } \\
+&=&\frac{P\left( o^{0}\mid a^{1}\right) P\left( a^{1}\mid \beta ,\delta
+\right) }{P\left( o^{0}\right) } \\
 &=&\frac{\left[ P\left( o^{0}\mid a^{1},f^{0}\right) +P\left( o^{0}\mid
-a^{1},f^{1}\right) \right] P\left( a^{1}\right) }{P\left( o^{0}\right) } \\
+a^{1},f^{1}\right) \right] P\left( a^{1}\mid \beta \right) }{P\left(
+o^{0}\right) } \\
 &=&\frac{\left[ 1+0\right] \beta }{\beta \left( \frac{1}{2}-\delta \right) +%
 \frac{1}{2}} \\
 &=&\frac{\beta }{\beta \left( \frac{1}{2}-\delta \right) +\frac{1}{2}} \\
@@ -175,9 +176,17 @@ a^{1},o^{0}\mid \beta ,\delta \right) }{P\left( o^{0}\mid \beta ,\delta
 \right) }-\frac{1}{2}+\delta \right) }
 \end{eqnarray*}%
 We do not know $\delta $, but using a consensus of multiple observers over
-multiple draws of $f$ we can approximate it. We can start with a
-uninformative prior (uniform over $\left[ 0,1\right] $) and update this via
-Bayes theorem.
+multiple draws of $f$ we can approximate it with $\hat{\delta}$. This gives
+us the estimator%
+\begin{eqnarray*}
+\hat{\beta} &=&\frac{1}{2\left( \frac{1}{P\left( a^{1}\mid o^{0},\beta
+,\delta \right) }-\frac{1}{2}+\hat{\delta}\right) } \\
+&=&\frac{1}{2\left( \frac{1}{\frac{1}{\frac{1}{2}-\delta +\frac{1}{2\beta }}}%
+-\frac{1}{2}+\hat{\delta}\right) } \\
+&&\frac{1}{\frac{1}{2}-\delta +\frac{1}{2\beta }}
+\end{eqnarray*}
+We can start with a uninformative prior (uniform over $\left[ 0,1\right] $)
+and update this via Bayes theorem.
 
 \section{Stopping criterion}
 

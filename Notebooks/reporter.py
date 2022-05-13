@@ -1,5 +1,7 @@
 """
-Functions and objects to aid in Reporter modeling
+Functions and objects to aid in Reporter modeling.
+
+We will use the Google standard for docstring formatting.
 """
 
 import scipy.stats as st
@@ -69,12 +71,12 @@ def evaluate_estimators_full(data, agreement_thresh=0.5, printing=True):
     (o, delta, f, beta, alpha, epsilon,tau,r) = data
     n_t, n_i = o.shape
     # MLE for epsilons 
-    epsilon_hat = [1-argwhere(o[:,i]==2).shape[0]/(o.shape[0]) for i in range(o.shape[1])]
+    epsilon_hat = [1-np.argwhere(o[:,i]==2).shape[0]/(n_t) for i in range(n_i)]
     epsilon_norm = np.linalg.norm(epsilon_hat - epsilon)
     # We need to drop any timestep where we got absolutely no information.
     drop_rows = np.argwhere(np.all(o == 2, axis=1)).flatten()
     o = np.delete(o,drop_rows,0)
-    n_t = o.shape[0]
+    n_t, n_i = o.shape
     # Concensus estimator for f
     b = np.array([st.mode([oit for oit in o[t] if oit!=2])[0][0] for t in range(n_t)])
     f = np.delete(f,drop_rows)
